@@ -246,6 +246,52 @@ The NSO standards are Claude Code project files: the rules, plus checks that run
 mounted into the container workspace, so Claude Code sees them whether you open the panel in
 VS Code or run `claude` in the container terminal.
 
+How the pieces fit together, numbered in the order things happen:
+
+```mermaid
+flowchart LR
+    claudemd["<b>CLAUDE.md</b><br/>Team standards and rules"]
+    settings["<b>.claude/settings.json</b><br/>Wires hooks, sets permissions"]
+    you["<b>You</b><br/>Developer"]
+    claude["<b>Claude Code</b><br/>AI coding assistant"]
+    hooks["<b>.claude/hooks/</b><br/>Automatic checks"]
+    packages["<b>Service packages</b><br/>YANG, Python, templates"]
+    skills["<b>.claude/skills/</b><br/>Step-by-step workflows"]
+    agents["<b>.claude/agents/</b><br/>nso-reviewer, reviews against CLAUDE.md"]
+
+    claudemd -- "① loaded every session" --> claude
+    settings -- "② registers hooks" --> hooks
+    you -- "③ request or /skill" --> claude
+    claude -- "④ follows" --> skills
+    claude -- "⑤ write, edit, run" --> hooks
+    hooks -. "⑥ errors to fix" .-> claude
+    hooks -- "⑦ allowed" --> packages
+    skills -- "⑧ delegates review" --> agents
+
+    classDef actor fill:#C15F3C,stroke:#C15F3C,color:#FFFFFF
+    classDef config fill:#EEF2F7,stroke:#9AA7B8,color:#1F2A37
+    classDef target fill:#E4F1EA,stroke:#7FB394,color:#1F2A37
+    class you,claude actor
+    class claudemd,settings,hooks,skills,agents config
+    class packages target
+```
+
+1. **Session start:** Claude Code loads `CLAUDE.md`, so the team's rules are in its context
+   before you type anything.
+2. **Session start:** `.claude/settings.json` registers the hooks and sets which commands run
+   without asking.
+3. **You ask:** a plain request ("add IPv6 to the ACL service") or a skill such as
+   `/new-service`.
+4. **Claude Code follows a skill:** when the task matches one, it runs that skill's steps
+   (scaffold, compile, reload, test, and so on).
+5. **Claude Code acts:** every file write, edit or command goes through the hooks first.
+6. **Hooks push back** (dashed arrow): a bad package name is blocked, and lint, compile or
+   consistency errors are sent back. Claude Code fixes them and tries again, repeating ⑤ and ⑥
+   until the checks pass.
+7. **Change lands:** once the checks pass, the change is in your service packages.
+8. **Review:** `/ship-it` hands the finished change to the `nso-reviewer` agent. It works in its
+   own context with read-only tools and checks the change against `CLAUDE.md` before the PR.
+
 ### Standards: `CLAUDE.md`
 
 Claude Code loads `CLAUDE.md` at the start of every session. It holds the rules your team agreed on:
