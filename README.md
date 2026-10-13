@@ -1,36 +1,27 @@
-<h1 align="center">🛠️📦 NSO Consistent Development Environment<br /><br />
-<div align="center">
-<img src="doc-images/nso_consistent_env_logo.png" width="500"/>
-</div>
+<h1 align="center">🛠️📦 NetOps AI Development Environment<br /><br />
 
 <div align="center">
   <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&labelColor=555555&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/Bash-Script-blue" alt="Bash"/>
   <img src="https://img.shields.io/badge/VSCode-only-blue" alt="VSCode-Only"/>
   <img src="https://img.shields.io/badge/Claude%20Code-D97757?style=flat&logo=anthropic&labelColor=555555&logoColor=white" alt="Claude Code"/>
-  <img src="https://img.shields.io/badge/Cisco-1BA0D7?style=flat&logo=cisco&labelColor=555555&logoColor=white" alt="Cisco"/>
+  <img src="https://img.shields.io/badge/Cisco%20NSO-1BA0D7?style=flat&logo=cisco&labelColor=555555&logoColor=white" alt="NSO"/>
   <img src="https://img.shields.io/badge/Network-Tools-green" alt="Networking"/>
-  <a href="https://developer.cisco.com/codeexchange/github/repo/ponchotitlan/nso-consistent-dev-environment"><img src="https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg" alt="DevNet"/></a>
 </div></h1>
 
-<div align="center">
-A series of tools and recommendations for building standardized, container-based Cisco NSO environments tailored for Network Automation development projects.<br /><br />
-<code>aka. Helping you, fellow NSO developer, to get started coding faster</code><br />
-</div></br>
+A series of tools and recommendations for building standardized, container-based environments tailored for Network Automation development projects.
 
-> 🚨 This project makes use of `devcontainers`, which is a feature available only on **Visual Studio Code**. For a more generic version, check [this branch of the repository](https://github.com/NSO-developer/nso-consistent-dev-environment/tree/scripts-based).
+> This repository consists on an implementation of these principles towards NSO Service Packages. However, if you're working on developing other things, such as Ansible playbooks, OpenTofu modules, etc; you can still benefit from the principles applied in this project.
 
 ## ✨ Overview
 
-**No more setup headaches.** Join a Network Automation project and start coding services immediately - not after days of wrestling with scattered docs, mismatched libraries, and broken sources.
+**No more setup headaches.** Join a Network Automation project and start coding services immediately, not after days of wrestling with scattered docs, mismatched libraries, and broken sources.
 
 This project provides:
 - 🤝 **Consistent environments**: Same NSO versions, NEDs, and packages for the entire team
 - 🚀 **Build once, use many**: Download artifacts once, spin up unlimited containers
 - 🚢 **Based on official NSO**: Extends the official container image without modifying it
 - 🤖 **AI pair programming with shared rules**: Claude Code reads the team's NSO standards from the repo, enforces them with hooks, and tracks work through the GitHub MCP server
-
-![nso-consistent-dev-env-arch](doc-images/nso-consistent-dev-env-arch_.png)
 
 ## 📁 What's Included
 
@@ -59,6 +50,29 @@ This project provides:
 
 *The runtime config in `config/runtime/ncs.conf` separates NEDs and artifacts (`/opt/ncs/packages`) from your services (`/nso/run/packages`) for a clean development experience.
 
+### 🗺️ Deployed architecture
+
+Once the container is up, this is what runs and how the pieces connect:
+
+```mermaid
+flowchart LR
+    vscode["VS Code"] -- "Dev Containers" --> claude
+    repo[("Repository")] -- "bind mount" --> runtime
+
+    subgraph container["nso-dev container"]
+        claude["Claude Code"] -- "edit, compile, test" --> runtime
+        subgraph runtime[" "]
+            direction LR
+            packages["Service packages"] -- "packages reload" --> nso["NSO"]
+            nso -- "NEDs" --> netsims["Netsim devices"]
+        end
+    end
+
+    claude -- "issues, PRs" --> github["GitHub MCP server"]
+```
+
+Your service code lives on the host and is bind-mounted into the container, so edits made inside it show up as diffs in your repository. NSO, the netsims, Claude Code and the tests all run inside the single `nso-dev` container. Only Claude Code's calls to the Anthropic API and the GitHub MCP server leave your machine.
+
 ---
 
 ## ✅ Prerequisites
@@ -70,7 +84,7 @@ This project provides:
 With your local environment ready, clone and enter the repo
 
 ```bash
-git clone https://github.com/ponchotitlan/nso-consistent-dev-environment.git
+git clone https://github.com/ponchotitlan/netops-ai-dev-environment
 cd nso-consistent-dev-environment
 ```
 
@@ -223,63 +237,6 @@ Additionally, your netsim devices are fully reachable and synced:
 ![show devices list](./doc-images/nso-devices.png)
 
 Finally, when you close your VS Code IDE window, your NSO container will inmediately go into pause.
-
-### 🗺️ Deployed architecture
-
-Once the container is up, this is what runs and how the pieces connect:
-
-```mermaid
-flowchart LR
-    subgraph host["💻 Host"]
-        vscode["VS Code<br/>Dev Containers"]
-        repo[("Repository<br/>source/packages · config/runtime<br/>bootstrap · nso-lab-topology.yaml<br/>CLAUDE.md · .claude/ · .mcp.json<br/>.github/ · Makefile · scripts/")]
-        env[".env<br/>ADMIN_* · NSO_*_PORT · GITHUB_PAT"]
-        browser["Browser / RESTCONF / SSH clients"]
-    end
-
-    subgraph docker["🐳 Docker network: dev-netwk"]
-        subgraph nsodev["Container nso-dev (NSO_IMAGE)"]
-            ide["VS Code server<br/>+ extensions"]
-            claude["Claude Code<br/>CLAUDE.md · hooks · skills<br/>nso-reviewer agent"]
-            workspace["/nso/run/packages<br/>your -cfs / -rfs services"]
-            neds["/opt/ncs/packages<br/>NEDs and artifacts"]
-            tools["/workspace-tools<br/>Makefile · scripts (read-only)"]
-            nso["NSO<br/>ncs.conf from /nso/etc<br/>Web UI / RESTCONF :8080<br/>CLI over SSH :2022"]
-            robot["Robot Framework tests"]
-            subgraph netsims["Netsim devices (/netsim)"]
-                xr["IOS XR<br/>asr9k-xr-7601<br/>ncs5k-xr-5702"]
-                ios["IOS<br/>router-ios-01<br/>switch-ios-01"]
-                asa["ASA<br/>asa-fw-01<br/>asa-virtual-02"]
-            end
-        end
-        vol[("Volume claude-config<br/>/root/.claude")]
-    end
-
-    github["GitHub MCP server<br/>api.githubcopilot.com/mcp<br/>issues · PRs · projects"]
-    anthropic["Anthropic API"]
-
-    vscode -- "attaches to" --> ide
-    repo -- "bind mounts" --> workspace
-    repo -- "bind mounts" --> tools
-    repo -- "bind mounts" --> claude
-    env -- "environment" --> nsodev
-    browser -- "NSO_HTTP_PORT → 8080<br/>NSO_SSH_PORT → 2022" --> nso
-
-    ide --> claude
-    claude -- "edits, compiles, reloads" --> workspace
-    claude -- "make / scripts" --> tools
-    claude -- "ncs_cli" --> nso
-    claude <--> vol
-    claude -- "GITHUB_PAT" --> github
-    claude --> anthropic
-
-    workspace -- "packages reload" --> nso
-    neds --> nso
-    robot -- "RESTCONF" --> nso
-    nso -- "CLI over SSH via CLI NEDs" --> netsims
-```
-
-Your service code lives on the host and is bind-mounted into the container, so edits made inside it show up as diffs in your repository. NSO, the netsims, Claude Code and the tests all run inside the single `nso-dev` container. Only Claude Code's calls to the Anthropic API and the GitHub MCP server leave your machine.
 
 ---
 

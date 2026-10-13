@@ -1,0 +1,62 @@
+name: Service request
+description: A new NSO service package, or a change to an existing one
+title: "[service] "
+labels: ["service"]
+body:
+  - type: input
+    id: package
+    attributes:
+      label: Package
+      description: Existing or proposed package name. It must end with -cfs or -rfs.
+      placeholder: vlan-config-rfs
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - New service
+        - Change to an existing service
+    validations:
+      required: true
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Target platforms
+      multiple: true
+      options:
+        - IOS XR (cisco-iosxr-cli)
+        - IOS (cisco-ios-cli)
+        - ASA (cisco-asa-cli)
+    validations:
+      required: true
+  - type: textarea
+    id: intent
+    attributes:
+      label: What should the service do?
+      description: The user's intent, in plain words.
+    validations:
+      required: true
+  - type: textarea
+    id: inputs
+    attributes:
+      label: Service inputs
+      description: The parameters someone fills in to create an instance (names, types, ranges).
+      placeholder: |
+        - device: device name
+        - vlan-id: 1-4094
+        - name: string
+  - type: textarea
+    id: config
+    attributes:
+      label: Expected device configuration
+      description: The CLI the service should produce on each platform for one example input.
+      render: text
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] Create and change are covered by the Robot test
+        - [ ] Package is up after packages reload

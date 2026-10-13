@@ -1,0 +1,21 @@
+#Ignoring NSO mounted volume files
+config/runtime/ssh
+config/runtime/ssl
+config/runtime/ncs.crypto_keys
+
+# Ignoring .env
+.env
+
+# Ignoring NSO packages compiled files
+*load-dir/
+
+# Ignoring Python and ruff caches
+__pycache__/
+.ruff_cache/
+
+# Personal Claude Code settings and notes (the shared ones in .claude/ are committed)
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Ignoring MacOS files
+.DS_Store

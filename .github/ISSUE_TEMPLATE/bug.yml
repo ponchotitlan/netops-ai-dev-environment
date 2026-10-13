@@ -1,0 +1,41 @@
+name: Bug
+description: A service package or the dev environment does not behave as expected
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: package
+    attributes:
+      label: Package or component
+      description: The package (e.g. acl-rfs), or the part of the dev environment (image, scripts, netsims, Claude Code).
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      description: Service input (JSON), commands run, and on which netsim.
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Errors and logs
+      description: "Output of `show packages package <name> oper-status`, the Python VM log, or the Robot failure."
+      render: text
+  - type: input
+    id: versions
+    attributes:
+      label: NSO image and NED versions
+      placeholder: nso-dev:6.6.1, cisco-iosxr-cli 7.74.4

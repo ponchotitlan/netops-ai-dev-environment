@@ -1,0 +1,45 @@
+{
+  "name": "NetAuto Dev Environment",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose-override.yml"
+  ],
+  "service": "dev-main",
+  "workspaceFolder": "/nso/run/packages",
+  "shutdownAction": "stopCompose",
+  "onCreateCommand": "make -C /workspace-tools wait-ready",
+  "postCreateCommand": "make -C /workspace-tools init claude-code",
+  "waitFor": "postCreateCommand",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Claude Code: reads CLAUDE.md, .claude/ and .mcp.json mounted into the workspace
+        "anthropic.claude-code",
+        // Python language support (IntelliSense, debugging, test discovery)
+        "ms-python.python",
+        // Fast, feature-rich Python language server with type checking and auto-imports
+        "ms-python.vscode-pylance",
+        // Python linter and formatter based on Ruff (replaces flake8, isort, black)
+        "charliermarsh.ruff",
+        // YAML language support with schema validation
+        "redhat.vscode-yaml",
+        // Robot Framework language support: syntax highlighting, code completion, test execution and debugging
+        "d-biehl.robotcode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.ruff": "always",
+          "source.organizeImports.ruff": "always"
+        },
+        "python.languageServer": "Pylance",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.diagnosticMode": "workspace",
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        "python-envs.defaultEnvManager": "ms-python.python:system"
+      }
+    }
+  }
+}
