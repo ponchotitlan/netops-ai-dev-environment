@@ -1,0 +1,86 @@
+module line-vty-rfs {
+
+  namespace "http://ciscolive.com/line-vty-rfs";
+  prefix line-vty-rfs;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Small rfs package for demonstration purposes";
+
+  revision 2025-02-02 {
+    description
+      "Awesome NetDevOps demo";
+  }
+
+  list line-template-vty-line-vty-rfs {
+    description "RFS utilities for Cisco IOSXR line template provisioning";
+    uses ncs:service-data;
+    ncs:servicepoint line-template-vty-line-vty-rfs-servicepoint;
+
+    key "device";
+
+    leaf device {
+      tailf:info "Cisco IOSXR device";
+      tailf:cli-expose-key-name;
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+    }
+
+    list line-template {
+      tailf:info "New line template";
+      key "name";
+
+      leaf name {
+        tailf:info "line template name";
+        type string;
+      }
+
+      leaf ip-group {
+        tailf:info "IP grouping name";
+        type string;
+        mandatory true;
+      }
+
+      leaf session-timeout {
+        tailf:info "Session timeout in seconds";
+        type uint32;
+        mandatory true;
+      }
+
+      leaf exec-timeout {
+        tailf:info "Execution timeout in seconds";
+        type uint32;
+        mandatory true;
+      }
+
+      leaf transport-input {
+        tailf:info "Input Transport enumeration";
+        type enumeration {
+          enum "ssh";
+          enum "telnet";
+        }
+        mandatory true;
+      }
+
+      leaf transport-output {
+        tailf:info "Output Transport enumeration";
+        type enumeration {
+          enum "ssh";
+          enum "telnet";
+        }
+        mandatory true;
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+services:
+  dev-main:
+    volumes:
+      # Claude Code project files, visible from the container workspace (/nso/run/packages)
+      - type: bind
+        source: ./CLAUDE.md
+        target: /nso/run/packages/CLAUDE.md
+        read_only: true
+      - type: bind
+        source: ./.claude
+        target: /nso/run/packages/.claude
+      - type: bind
+        source: ./.mcp.json
+        target: /nso/run/packages/.mcp.json
+        read_only: true
+      # Issue and PR templates, used when Claude Code drafts issues and pull requests
+      - type: bind
+        source: ./.github
+        target: /nso/run/packages/.github
+        read_only: true
+      # Claude Code login and history survive container rebuilds
+      - type: volume
+        source: claude-config
+        target: /root/.claude
+      - type: bind
+        source: ./Makefile
+        target: /workspace-tools/Makefile
+        read_only: true
+      - type: bind
+        source: ./scripts
+        target: /workspace-tools/scripts
+        read_only: true
+    environment:
+      # Read by .mcp.json to authenticate the GitHub MCP server
+      - GITHUB_PAT=${GITHUB_PAT:-}
+
+volumes:
+  claude-config:

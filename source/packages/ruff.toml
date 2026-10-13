@@ -1,0 +1,24 @@
+# Coding standards for NSO service packages, enforced by ruff.
+# Applied to every Python file Claude Code edits (.claude/hooks/post_edit.py) and by the
+# Ruff VS Code extension on save.
+line-length = 100
+target-version = "py39"
+extend-exclude = ["**/load-dir"]
+
+[lint]
+select = [
+    "E", "W", "F",  # pycodestyle and pyflakes (PEP 8, unused names)
+    "I",            # import order
+    "N",            # PEP 8 naming: snake_case functions and variables, PascalCase classes
+    "D",            # docstrings on every module, class and function
+    "ANN",          # type hints on every parameter and return value
+    "UP",           # modern Python syntax
+    "B",            # likely bugs
+]
+ignore = [
+    "D203", "D213",  # pick one docstring layout (Google style below)
+    "ANN401",        # NSO hands us untyped maagic nodes: Any is sometimes the honest type
+]
+
+[lint.pydocstyle]
+convention = "google"

@@ -1,0 +1,37 @@
+services:
+  dev-main:
+    container_name: nso-dev
+    image: ${NSO_IMAGE}
+    volumes:
+      - type: bind
+        source: ${HOST_PACKAGES_DIR}
+        target: /nso/run/packages
+      - type: bind
+        source: ${HOST_RUNTIME_CONFIG_DIR}
+        target: /nso/etc
+      - type: bind
+        source: ${HOST_BOOTSTRAP_DIR}
+        target: /tmp/nso
+      - type: bind
+        source: ${HOST_TOPOLOGY_FILE}
+        target: /tmp/nso-lab-topology.yaml
+        read_only: true
+    healthcheck:
+      test: ncs_cmd -c "wait-start 2"
+      interval: 5s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    environment:
+      - EXTRA_ARGS=--with-package-reload-force
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    networks:
+      - dev-netwk
+    ports:
+      - "${NSO_HTTP_PORT}:8080"
+      - "${NSO_SSH_PORT}:2022"
+
+networks:
+  dev-netwk:
+    driver: bridge

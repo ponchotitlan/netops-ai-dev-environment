@@ -1,0 +1,18 @@
+topology:
+  cisco-iosxr-cli:
+    ned_version: "7.74.4"
+    netsims:
+      - asr9k-xr-7601
+      - ncs5k-xr-5702
+
+  cisco-ios-cli:
+    ned_version: "6.110.3"
+    netsims:
+      - router-ios-01
+      - switch-ios-01
+
+  cisco-asa-cli:
+    ned_version: "6.18.29"
+    netsims:
+      - asa-fw-01
+      - asa-virtual-02
