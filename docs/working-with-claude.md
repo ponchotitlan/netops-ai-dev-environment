@@ -96,6 +96,73 @@ Claude Code:
   *"what's assigned to me this sprint?"* or *"open the PR for this branch"*. Issue and PR
   templates are in `.github/`.
 
+## Walkthrough
+
+### `/start-my-day` skill
+
+Let's say that you have a project board somewhere. For the purpose of this demo, this board is [hosted within this GitHub repository](https://github.com/users/ponchotitlan/projects/2):
+
+[GitHub Project Board](../doc-images/github-project-board.png)
+
+This project board has several issues assigned to you (which ideally you shall complete and merge before the current sprint ends):
+
+[GitHub Project Board](../doc-images/github-issue.png)
+
+The best way to keep track of what you have to work with is via the following skill in Claude Code:
+
+```bash
+/start-my-day
+```
+
+This skill will connect to the GitHub project, pull a summary of your assigned issues, and sync all your development environment so you are fully ready to work:
+
+![Start my Day](../doc-images/claude-start-my-day.png)
+
+
+Afterwards, you can ask Claude Code to work on any of the pending items and determine by itself the course of action:
+
+![Claude deltas](../doc-images/claude-deltas.png)
+
+
+### `/test-service` skill
+
+To verify that any given service is working, you can use the following skill on Claude Code:
+
+```bash
+/test-service <service-name>
+```
+
+The skill will invoke the associated Robot tests and give you a summary of the execution:
+
+![Test service](../doc-images/claude-test-service.png)
+
+### `/ship-it` skill
+
+Once you're ready to push code related to your ongoing user story/issue, you can use the following skill:
+
+```bash
+/ship-it <issue-id>
+```
+
+This skill will do the following:
+
+1. Run your current changes against the compliance checks of the project
+2. Create a new branch with a name associated to the specified issue ID
+3. Commit your current code to it
+4. Push the branch in the repository
+5. Create a PR against `main`
+
+> All of this is done using the GitHub MCP Server, therefore the token provided must have write access to the repository for branches and PRs!
+
+![Ship it 1](../doc-images/claude-ship-it-result.png)
+
+![Ship it 2](../doc-images/claude-ship-it-final.png)
+
+The result is a PR of this sorts:
+
+![GitHub PR](../doc-images/github-pr.png)
+
+
 ## Learn more
 
 - [Claude Code documentation](https://code.claude.com/docs)
