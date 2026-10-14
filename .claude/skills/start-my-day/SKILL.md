@@ -1,21 +1,29 @@
 ---
 name: start-my-day
-description: Morning brief for this NSO project. Pulls the user's assigned issues for the current sprint from GitHub through the github MCP server, checks that NSO packages are up and netsims are in sync, and suggests what to work on first. Use when the user says good morning, asks what to work on today, or runs /start-my-day.
+description: Morning brief for this NSO project. Pulls the user's assigned items in the current project iteration from GitHub through the github MCP server, checks that NSO packages are up and netsims are in sync, and suggests what to work on first. Use when the user says good morning, asks what to work on today, or runs /start-my-day.
 ---
 
 # Start my day
 
 Build a short morning brief, then help the user pick up their first task.
 
-## 1. Find the sprint and my work (github MCP server)
+## 1. Find the iteration and my work (github MCP server)
+
+Sprints are the project's **Iteration** field, not milestones.
 
 1. `get_me` tells you who the user is.
-2. Find the repository: `git remote get-url origin` works on the host. Inside the container
-   `.git` is not mounted, so ask the user once if you can't tell (`owner/repo`).
-3. The current sprint is the open milestone with the nearest due date.
-4. List the open issues in that milestone assigned to the user. Look them up on the project
-   board (`projects_list` / `projects_get`) to get each item's **Status**.
-5. Also list open pull requests where the user's review is requested.
+2. Find the repository: `echo $GITHUB_REPOSITORY` (`owner/repo`, set in `.env`). If it is
+   empty, `git remote get-url origin` works on the host; inside the container `.git` is not
+   mounted, so ask the user once.
+3. Find the project: `projects_list` for the repository owner. If more than one project is
+   listed, pick the one linked to the repository, or ask the user once.
+4. Read the project's fields (`projects_list` / `projects_get`) to get the **Iteration** field
+   and its current iteration: the one whose start date plus duration contains today.
+5. List the project items in the current iteration assigned to the user, using the query
+   `iteration:@current assignee:@me -status:Done`. If the query isn't accepted, list the items
+   and filter on Iteration, assignee and Status yourself. Keep each item's **Status**,
+   **Priority** and **Package**.
+6. Also list open pull requests where the user's review is requested.
 
 If the github tools are missing, `GITHUB_PAT` is probably not set in `.env`: say so and carry on
 with step 2.
@@ -36,8 +44,9 @@ NSO is not running: suggest reopening the dev container.
 
 Keep it under 20 lines:
 
-- Sprint name, goal (milestone description) and days left.
-- Table of the user's items: `#`, title, status. In progress first, then Todo.
+- Iteration name, its dates and days left.
+- Table of the user's items: `#`, title, status, priority, package. In progress first, then
+  Todo; P0 before P1 within each.
 - Reviews waiting for them.
 - NSO: one line, OK or what is off (packages down, devices out of sync).
 - Suggested first task, and why (in progress beats new; blockers for teammates beat the rest;

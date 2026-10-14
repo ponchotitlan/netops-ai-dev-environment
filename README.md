@@ -45,7 +45,7 @@ This project provides:
 | `.claude/skills/` | `/start-my-day`, `/new-service`, `/reload-packages`, `/test-service`, `/ship-it` |
 | `.claude/agents/nso-reviewer.md` | Subagent that reviews packages against the standards and NSO best practices |
 | `.mcp.json` | GitHub MCP server for issues, pull requests and the project board |
-| `source/packages/ruff.toml` | Python coding standards as ruff rules (naming, docstrings, type hints) |
+| `ruff.toml` | Python coding standards as ruff rules (naming, docstrings, type hints) |
 | `.github/` | Issue templates and pull request template |
 
 *The runtime config in `config/runtime/ncs.conf` separates NEDs and artifacts (`/opt/ncs/packages`) from your services (`/nso/run/packages`) for a clean development experience.
@@ -218,7 +218,7 @@ Once done, the environment is all yours for usage!
 
 > **This process will happen only once: when your container is first created**. It will only be triggered again if the container is destroyed.
 
-Your VSCode window will open by default in the location `/nso/run/packages` where your services in the repository location `source/packages` are mounted - meaning that whichever changes you do inside of your container, will reflect as diffs in your repository.
+Your VSCode window will open by default in the location `/nso/run/packages`, where your services in the repository location `source/packages` are mounted - meaning that whichever changes you do inside of your container, will reflect as diffs in your repository.
 
 ![Landing page container](./doc-images/nso-landing.png)
 
@@ -329,7 +329,7 @@ to Claude Code to fix:
 | When | Check |
 |------|-------|
 | Before writing a file or running `ncs-make-package` | Package names without `-cfs` / `-rfs` are blocked |
-| After editing Python | `ruff format` + `ruff check --fix` with the rules in `source/packages/ruff.toml` (naming, docstrings, type hints, imports) |
+| After editing Python | `ruff format` + `ruff check --fix` with the rules in `ruff.toml` (naming, docstrings, type hints, imports) |
 | After editing YANG | The package is compiled with `ncsc` and compile errors are reported |
 | After editing anything in a package | Every `{$VAR}` in a template is set with `vars.add()` (and vice versa), every `template.apply("x")` has `templates/x.xml`, servicepoints match between YANG and `register_service()`, and `package-meta-data.xml` points at a real Python class |
 
@@ -403,7 +403,7 @@ This is what's going on with these files:
 3. It exposes the NSO HTTP and SSH ports from the container to your host machine using the values defined in your `.env` file.
 4. It also injects the admin credentials and extra startup arguments that NSO needs when the container boots.
 5. The healthcheck in `docker-compose.yml` makes Docker verify that NSO has really started before the environment is considered healthy.
-6. `docker-compose-override.yml` adds extra bind mounts only for development convenience: the local `Makefile` and `scripts/` folder under `/workspace-tools`, and the Claude Code files (`CLAUDE.md`, `.claude/`, `.mcp.json`) plus `.github/` inside `/nso/run/packages`. It also keeps Claude Code's login in a named volume and passes `GITHUB_PAT` to the container.
+6. `docker-compose-override.yml` adds extra bind mounts only for development convenience: the local `Makefile` and `scripts/` folder under `/workspace-tools`, and the whole repository under `/workspace` (with `.git` hidden). Nothing is mounted into `/nso/run/packages`, which keeps only your packages: `CLAUDE.md` goes to `/nso/run/CLAUDE.md` (Claude Code reads it from parent folders), and `.claude/settings.json`, `hooks/`, `skills/` and `agents/` to the user-level `/root/.claude/`. `make claude-code` registers the github server from `.mcp.json` at user scope. It also keeps Claude Code's login in a named volume, trusts the Cisco Secure Access CA (`NODE_EXTRA_CA_CERTS`), and passes `GITHUB_PAT` and `GITHUB_REPOSITORY` to the container.
 7. Those extra mounts are what allow the devcontainer commands such as `make -C /workspace-tools wait-ready` and `make -C /workspace-tools init` to run inside the container using the files from your repository.
 
 > In practice, the base compose file runs the NSO container itself, and the override file adds the extra tooling that makes the container usable as a full development environment.

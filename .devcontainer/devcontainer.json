@@ -13,7 +13,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        // Claude Code: reads CLAUDE.md, .claude/ and .mcp.json mounted into the workspace
+        // Claude Code: CLAUDE.md from /nso/run, settings/skills/agents/hooks from /root/.claude
+        // (docker-compose-override.yml), github MCP server registered by `make claude-code`
         "anthropic.claude-code",
         // Python language support (IntelliSense, debugging, test discovery)
         "ms-python.python",

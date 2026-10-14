@@ -5,8 +5,11 @@ standards, and hooks in `.claude/` enforce them.
 
 ## Where things are
 
-The dev container opens at `/nso/run/packages`, which is `source/packages/` in the repository.
-`CLAUDE.md`, `.claude/` and `.mcp.json` are mounted into it (`docker-compose-override.yml`).
+The dev container opens at `/nso/run/packages`, which is `source/packages/` in the repository:
+only the service packages. The rest of the repository is at `/workspace` (e.g.
+`/workspace/.github/pull_request_template.md`). Inside the container this file is mounted at
+`/nso/run/CLAUDE.md`, and the settings, hooks, skills and agents at `/root/.claude/`
+(`docker-compose-override.yml`).
 
 - `<package>/src/yang/*.yang`: data model, compiled by `ncsc` into `<package>/load-dir/`
 - `<package>/python/<package_underscored>/main.py`: service callbacks and `Main` application
@@ -23,7 +26,7 @@ The dev container opens at `/nso/run/packages`, which is `source/packages/` in t
 - `echo "packages reload" | ncs_cli -Cu admin`: load compiled packages into NSO
 - `echo "show packages package oper-status" | ncs_cli -Cu admin`: check packages are `up`
 - `cd <package>/tests && robot <package>.robot`: run a package's Robot tests
-- `ruff check <path>` / `ruff format <path>`: lint and format (rules in `source/packages/ruff.toml`)
+- `ruff check <path>` / `ruff format <path>`: lint and format (rules in `ruff.toml` at the repository root)
 
 ## Naming
 
@@ -95,6 +98,9 @@ change.
 
 - Work is tracked in GitHub issues and the project board, through the `github` MCP server.
   Start from an issue; reference it in branches, commits and PRs.
+- The target repository is `$GITHUB_REPOSITORY` (`owner/repo`, set in `.env`): read it with
+  `echo $GITHUB_REPOSITORY` and use it for every github MCP call. If it is empty, fall back to
+  `git remote get-url origin` on the host, or ask the user once.
 - Branch `<type>/<issue>-<slug>`, Conventional Commits:
   `feat(acl-rfs): support IPv6 destinations (#12)`.
 - The repository's `.git` is not mounted in the container: commit and push from a terminal on

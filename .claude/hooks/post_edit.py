@@ -2,7 +2,7 @@
 
 After each Write, Edit or MultiEdit:
 
-- Python: `ruff format` and `ruff check --fix`, with the rules in `source/packages/ruff.toml`.
+- Python: `ruff format` and `ruff check --fix`, with the rules in `ruff.toml` (repo root).
 - YANG: the package is compiled with `ncsc` (`make clean all` in its `src/`).
 - Anything in a package: YANG, Python, templates and `package-meta-data.xml` must agree
   (see `nso_packages.check_package`).
@@ -50,7 +50,7 @@ def _ruff(path: Path) -> list[str]:
     if lint.returncode == 0:
         return []
     return [
-        f"ruff found problems in {path.name} (rules in source/packages/ruff.toml):",
+        f"ruff found problems in {path.name} (rules in ruff.toml at the repo root):",
         (lint.stdout or lint.stderr).strip(),
     ]
 

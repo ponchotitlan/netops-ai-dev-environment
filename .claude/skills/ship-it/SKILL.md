@@ -45,7 +45,7 @@ Robot output files (`log.html`, `report.html`, `output.xml`) unless the user wan
 
 Once the user confirms the push:
 
-1. `create_pull_request` against `main`, filling in `.github/pull_request_template.md`. The body
+1. `create_pull_request` in `$GITHUB_REPOSITORY` (see `CLAUDE.md`) against `main`, filling in `.github/pull_request_template.md`. The body
    must say `Closes #<issue>`, which packages changed, and how they were tested.
 2. Ask before moving the project item to **In review** (`projects_write`).
 3. Reply with the PR URL and a two-line summary.

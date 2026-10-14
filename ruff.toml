@@ -1,6 +1,7 @@
 # Coding standards for NSO service packages, enforced by ruff.
 # Applied to every Python file Claude Code edits (.claude/hooks/post_edit.py) and by the
-# Ruff VS Code extension on save.
+# Ruff VS Code extension on save. Inside the dev container it is also mounted as ruff's user
+# config (/root/.config/ruff/ruff.toml), so files opened as /nso/run/packages/... get it too.
 line-length = 100
 target-version = "py39"
 extend-exclude = ["**/load-dir"]
