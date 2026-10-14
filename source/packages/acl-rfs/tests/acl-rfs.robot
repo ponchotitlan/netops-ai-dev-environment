@@ -11,7 +11,7 @@ Library    JSONLibrary
 Suite Setup    Set my HTTP Request Header
 
 *** Variables ***
-${test_device_container}    router-ios-01
+${test_device_container}    asr9k-xr-7601
 ${url_acl_service}    http://localhost:8080/restconf/data/acl-rfs:access-list-acl-rfs
 
 *** Test Cases ***

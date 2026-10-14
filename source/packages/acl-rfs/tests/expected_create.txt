@@ -1,4 +1,4 @@
-devices device ciscolive-iosxr-dummy-01
+devices device asr9k-xr-7601
  config
   ipv4 access-list test_acl_01
    30 permit 172.138.4.50
