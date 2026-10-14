@@ -15,10 +15,11 @@ panel or run `claude` in the container terminal.
 | *Plain requests*, e.g. "add IPv6 to the ACL service" | Claude Code edits the package. The hooks check every change |
 | `/reload-packages` | Compiles, reloads and checks every package is `up`. If one isn't, it shows the error and the Python VM log |
 | `/test-service <name>` | Runs the package's Robot tests and explains any failures |
-| `/ship-it` | Lint, compile, reload, test, then a review by the `nso-reviewer` agent. Ends with the commit commands for your host and the pull request |
+| `/ship-it` | Lint, compile, reload, test, then a review by the `nso-reviewer` agent. Then it pushes the branch and opens the pull request through the GitHub MCP server, after you confirm |
 
-> The repository's `.git` isn't mounted in the container, so you commit and push from a terminal
-> on the host. `/ship-it` gives you the exact commands.
+> The repository's `.git` isn't mounted in the container, so `/ship-it` pushes through the GitHub
+> MCP server: one commit with the changed package files on a new branch. Afterwards, on the host,
+> run `git fetch && git switch <branch>` to pick it up.
 
 ## How the pieces fit
 
@@ -57,7 +58,7 @@ flowchart LR
 3. **Every write, edit or command goes through the hooks.** If a hook reports a problem (dashed
    arrow), Claude Code fixes it and tries again until the checks pass.
 4. **Review:** `/ship-it` hands the change to the `nso-reviewer` agent. It works in its own
-   context with read-only tools.
+   context with read-only tools, and can read the issue and `main` on GitHub to compare.
 
 ## The rules: `CLAUDE.md`
 

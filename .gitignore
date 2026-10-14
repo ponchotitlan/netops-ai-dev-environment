@@ -20,3 +20,8 @@ CLAUDE.local.md
 # Ignoring MacOS files
 .DS_Store
 *.pem
+
+# Ignoring Robot Framework run artifacts
+output.xml
+log.html
+report.html

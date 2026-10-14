@@ -68,7 +68,7 @@ Fill the rest of `.env`:
 |----------|------------|
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | NSO admin login (default `admin` / `admin`) |
 | `NSO_HTTP_PORT`, `NSO_SSH_PORT` | Host ports for NSO HTTP and SSH (default `8080` / `2022`) |
-| `GITHUB_PAT` | Fine-grained GitHub token with read/write on Issues, Pull requests and Projects, for the GitHub MCP server |
+| `GITHUB_PAT` | Fine-grained GitHub token with read/write on Contents, Issues, Pull requests and Projects, for the GitHub MCP server. Contents is what lets `/ship-it` push the branch |
 | `GITHUB_REPOSITORY` | The repository Claude Code tracks work in, as `owner/repo` |
 
 Then list your lab devices in [`nso-lab-topology.yaml`](../nso-lab-topology.yaml). The NED name
