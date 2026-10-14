@@ -16,10 +16,9 @@
         // Claude Code: CLAUDE.md from /nso/run, settings/skills/agents/hooks from /root/.claude
         // (docker-compose-override.yml), github MCP server registered by `make claude-code`
         "anthropic.claude-code",
-        // Python language support (IntelliSense, debugging, test discovery)
+        // Python language support (IntelliSense, debugging, test discovery). In VS Code it pulls in
+        // Pylance; VS Code forks (Cursor, Windsurf) use their own Pyright-based server instead
         "ms-python.python",
-        // Fast, feature-rich Python language server with type checking and auto-imports
-        "ms-python.vscode-pylance",
         // Python linter and formatter based on Ruff (replaces flake8, isort, black)
         "charliermarsh.ruff",
         // YAML language support with schema validation
@@ -33,7 +32,8 @@
           "source.fixAll.ruff": "always",
           "source.organizeImports.ruff": "always"
         },
-        "python.languageServer": "Pylance",
+        // Default = Pylance in VS Code, the editor's own server elsewhere
+        "python.languageServer": "Default",
         "python.analysis.typeCheckingMode": "basic",
         "python.analysis.autoImportCompletions": true,
         "python.analysis.diagnosticMode": "workspace",
