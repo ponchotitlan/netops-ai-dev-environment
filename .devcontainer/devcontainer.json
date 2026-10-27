@@ -6,7 +6,7 @@
   ],
   "service": "dev-main",
   "workspaceFolder": "/nso/run/packages",
-  "shutdownAction": "stopCompose",
+  "shutdownAction": "none",
   "onCreateCommand": "make -C /workspace-tools wait-ready",
   "postCreateCommand": "make -C /workspace-tools init claude-code",
   "waitFor": "postCreateCommand",
