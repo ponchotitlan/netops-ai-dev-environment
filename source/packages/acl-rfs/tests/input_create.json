@@ -1,7 +1,7 @@
 {
   "acl-rfs:access-list-acl-rfs": [
     {
-      "device": "ciscolive-iosxr-dummy-01",
+      "device": "asr9k-xr-7601",
       "access_list": [
         {
           "name": "test_acl_01",
